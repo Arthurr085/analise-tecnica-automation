@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Recurse \"c:\\\\projetos\\\\analise-tecnica-automation\\\\projeto_analise_tecnica\" | Where-Object { !$_.PSIsContainer } | Select-Object FullName | ForEach-Object { $_.FullName.Replace\\(\"c:\\\\projetos\\\\analise-tecnica-automation\\\\projeto_analise_tecnica\\\\\", \"\"\\) })"
+    ]
+  }
+}
