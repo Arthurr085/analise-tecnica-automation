@@ -1,16 +1,41 @@
 import os
+import re
 import glob
 import pandas as pd
+from datetime import datetime
 
 from config.mapeamento import COLUNAS_OBRIGATORIAS
 
+# Padrão esperado: DD_MM_YYYY_vN.xlsx  (ex: 03_06_2026_v1.xlsx)
+_PADRAO_NOME = re.compile(r"^(\d{2}_\d{2}_\d{4})_v(\d+)\.xlsx$", re.IGNORECASE)
+
 
 def encontrar_arquivo_entrada(pasta_input: str) -> str:
-    """Retorna o .xlsx mais recente dentro da pasta input/."""
-    arquivos = glob.glob(os.path.join(pasta_input, "*.xlsx"))
-    if not arquivos:
-        raise FileNotFoundError(f"Nenhum arquivo .xlsx encontrado em '{pasta_input}'")
-    return max(arquivos, key=os.path.getmtime)
+    """Retorna o arquivo mais recente de input/ com base na data e versão do nome."""
+    todos = glob.glob(os.path.join(pasta_input, "*.xlsx"))
+
+    if not todos:
+        raise FileNotFoundError(
+            f"Nenhum arquivo encontrado em '{pasta_input}'.\n"
+            f"  Formato esperado: DD_MM_YYYY_v1.xlsx  (ex: 03_06_2026_v1.xlsx)"
+        )
+
+    candidatos = []
+    for caminho in todos:
+        match = _PADRAO_NOME.match(os.path.basename(caminho))
+        if match:
+            data = datetime.strptime(match.group(1), "%d_%m_%Y")
+            versao = int(match.group(2))
+            candidatos.append((data, versao, caminho))
+
+    if not candidatos:
+        raise FileNotFoundError(
+            f"Nenhum arquivo no formato esperado encontrado em '{pasta_input}'.\n"
+            f"  Formato esperado: DD_MM_YYYY_v1.xlsx  (ex: 03_06_2026_v1.xlsx)"
+        )
+
+    candidatos.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    return candidatos[0][2]
 
 
 def ler_planilha(caminho: str) -> pd.DataFrame:
