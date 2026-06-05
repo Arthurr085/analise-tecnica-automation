@@ -19,6 +19,7 @@ ENV/
 *.egg
 
 # Dados sensíveis
+.env
 config/banco.py
 
 # Pastas de trabalho
