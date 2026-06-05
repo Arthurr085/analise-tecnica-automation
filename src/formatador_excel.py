@@ -11,14 +11,27 @@ _BORDA_THIN = Border(
     bottom=Side(style="thin"),
 )
 
+_COLUNAS_CENTRO = {
+    "Demanda",
+    "Analista/Programador",
+    "Objeto (Envolvimento na demanda)",
+    "Programa Alterado",
+    "Versão Pacote Atualização",
+}
+
+_COLUNAS_BORDA_SEMPRE = {"Demandas Pendentes"}
+
 
 def formatar_planilha(caminho: str) -> None:
     """Aplica toda a formatação visual na planilha gerada."""
     wb = load_workbook(caminho)
     ws = wb.active
 
+    indices_col = {cell.value: cell.column for cell in ws[1]}
+
     _formatar_cabecalho(ws)
-    _aplicar_bordas(ws)
+    _aplicar_bordas(ws, indices_col)
+    _alinhar_centro(ws, indices_col)
     _ajustar_largura_colunas(ws)
     ws.auto_filter.ref = ws.dimensions
 
@@ -35,11 +48,22 @@ def _formatar_cabecalho(ws) -> None:
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
 
-def _aplicar_bordas(ws) -> None:
+def _aplicar_bordas(ws, indices_col: dict) -> None:
+    borda_sempre = {indices_col[c] for c in _COLUNAS_BORDA_SEMPRE if c in indices_col}
     for row in ws.iter_rows(min_row=1, max_row=ws.max_row, max_col=ws.max_column):
         for cell in row:
-            if cell.value is not None and str(cell.value).strip() != "":
+            tem_conteudo = cell.value is not None and str(cell.value).strip() != ""
+            forcada = cell.column in borda_sempre and cell.row > 1
+            if tem_conteudo or forcada:
                 cell.border = _BORDA_THIN
+
+
+def _alinhar_centro(ws, indices_col: dict) -> None:
+    colunas = {indices_col[c] for c in _COLUNAS_CENTRO if c in indices_col}
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row):
+        for cell in row:
+            if cell.column in colunas:
+                cell.alignment = Alignment(horizontal="center", vertical="center")
 
 
 def _ajustar_largura_colunas(ws) -> None:

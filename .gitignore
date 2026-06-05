@@ -20,7 +20,6 @@ ENV/
 
 # Dados sensíveis
 .env
-config/banco.py
 
 # Pastas de trabalho
 input/
@@ -40,3 +39,6 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Executáveis
+*.bat
