@@ -1,15 +1,34 @@
-# Análise Técnica — Fase 1
+# Análise Técnica
 
-Gera automaticamente a planilha de Análise Técnica a partir de uma planilha recebida do cliente.
+Gera automaticamente a planilha de Análise Técnica a partir de uma planilha recebida do cliente, consultando dados complementares no banco Oracle.
 
 ## Requisitos
 
 - Python 3.12+
+- Oracle Client instalado e configurado
 
 ## Instalação
 
 ```bash
 pip install -r requirements.txt
+```
+
+## Configuração do banco
+
+Copie o arquivo de exemplo e preencha com as credenciais do banco Oracle:
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env`:
+
+```
+DB_HOST=host_do_banco
+DB_PORT=porta_do_banco
+DB_SERVICE_NAME=nome_do_servico
+DB_USER=usuario_do_banco
+DB_PASSWORD=senha_do_banco
 ```
 
 ## Uso
@@ -26,20 +45,22 @@ python main.py
 ## Estrutura
 
 ```
-projeto_analise_tecnica/
+analise-tecnica-automation/
 ├── input/                      # Planilha do cliente (.xlsx)
 ├── output/                     # Planilha gerada
 ├── logs/                       # Reservado para logs futuros
 ├── config/
 │   ├── mapeamento.py           # Colunas obrigatórias e mapeamento entrada→saída
 │   ├── colunas_saida.py        # Colunas do arquivo final
-│   └── banco.py                # Config Oracle (Fase 2)
+│   └── banco.py                # Conexão Oracle (lê variáveis do .env)
 ├── src/
 │   ├── leitor.py               # Leitura e validação da planilha do cliente
-│   ├── banco.py                # Dados mockados (Fase 2: Oracle)
+│   ├── banco.py                # Consultas Oracle
 │   ├── gerador.py              # Montagem do DataFrame de saída
 │   ├── formatador_excel.py     # Formatação visual (openpyxl)
 │   └── utils.py                # Helpers gerais
+├── .env                        # Credenciais do banco (não versionado)
+├── .env.example                # Modelo de configuração
 └── main.py                     # Ponto de entrada
 ```
 
@@ -61,18 +82,11 @@ projeto_analise_tecnica/
 | Coluna | Origem |
 |---|---|
 | Demanda | Planilha do cliente |
-| Descrição | Mock vazio (Fase 2: Oracle) |
-| Analista/Programador | Mock vazio (Fase 2: Oracle) |
-| Demandas Pendentes | Vazio |
+| Descrição | Oracle — DS_TITULO da demanda |
+| Analista/Programador | Oracle — usuário com maior tempo em SIDEMAITEM |
+| Demandas Pendentes | Oracle — demandas que compartilham arquivos via MOSERDEM |
 | Observação | Planilha do cliente |
-| Objeto (Envolvimento na demanda) | Vazio |
+| Objeto (Envolvimento na demanda) | Oracle — classificação via FN_ARQ_USADOS_DEM e SISCRIPT |
 | Programa Alterado | Coluna "Sistema" do cliente |
 | Versão Pacote Atualização | Coluna "Versão" do cliente |
-| Data Envio Pacote | Vazio |
-
-## Fase 2 — Integração Oracle
-
-Para ativar a integração com Oracle:
-
-1. Preencher `config/banco.py` com as credenciais
-2. Substituir o corpo de `src/banco.buscar_dados_demanda()` pela consulta real
+| Data Envio Pacote | Preenchimento manual |
