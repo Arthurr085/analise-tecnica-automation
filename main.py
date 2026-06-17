@@ -21,9 +21,10 @@ def main() -> None:
         print(f"Arquivo encontrado: {caminho_entrada}")
 
         df_entrada = ler_planilha(caminho_entrada)
-        print(f"Planilha lida com sucesso. {len(df_entrada)} demanda(s) encontrada(s).")
+        print(f"Planilha lida com sucesso. {len(df_entrada)} linha(s) encontrada(s).")
 
         df_saida = gerar_analise_tecnica(df_entrada)
+        print(f"{len(df_saida)} demanda(s) processada(s).")
 
         caminho_saida = gerar_nome_saida(PASTA_OUTPUT)
         df_saida.to_excel(caminho_saida, index=False)
