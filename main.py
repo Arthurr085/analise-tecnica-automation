@@ -33,15 +33,19 @@ def main() -> None:
         formatar_planilha(caminho_saida)
 
         # Exportar para Google Sheets (opcional - não interrompe se falhar)
-        try:
-            print("Exportando para Google Sheets...")
-            sucesso, mensagem = exportar_para_sheets(df_saida)
-            if sucesso:
-                print(f"[OK] {mensagem}")
-            else:
-                print(f"[AVISO] Google Sheets: {mensagem}")
-        except Exception as e:
-            print(f"[AVISO] Erro ao exportar para Google Sheets: {e}")
+        resposta = input("\nDeseja exportar para o Google Sheets? (s/n): ").strip().lower()
+        if resposta in ("s", "sim"):
+            try:
+                print("Exportando para Google Sheets...")
+                sucesso, mensagem = exportar_para_sheets(df_saida)
+                if sucesso:
+                    print(f"[OK] {mensagem}")
+                else:
+                    print(f"[AVISO] Google Sheets: {mensagem}")
+            except Exception as e:
+                print(f"[AVISO] Erro ao exportar para Google Sheets: {e}")
+        else:
+            print("Exportação para Google Sheets ignorada.")
 
         exibir_log(caminho_entrada, len(df_saida), caminho_saida)
 
