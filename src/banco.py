@@ -89,17 +89,21 @@ def _buscar_objeto(demanda: str) -> str:
 
 
 def _classificar_objeto(arquivos: str | None, tem_script: bool) -> str:
-    if not arquivos:
-        return "Script"
-    lower = arquivos.lower()
     partes = []
-    if "tela" in lower:
-        partes.append("Tela")
-    if "relatorio" in lower or "relatório" in lower:
-        partes.append("Relatório")
+
+    if arquivos:
+        lower = arquivos.lower()
+
+        if "tela" in lower:
+            partes.append("Tela")
+
+        if "relatorio" in lower or "relatório" in lower:
+            partes.append("Relatório")
+
     if tem_script:
         partes.append("Script")
-    return ", ".join(partes) if partes else "Script"
+
+    return ", ".join(partes) if partes else ""
 
 
 def _tem_script(nr_demanda: int, nr_anodem: int) -> bool:
