@@ -1,18 +1,29 @@
+"""Gerador da análise técnica a partir da planilha do cliente."""
+
 import pandas as pd
 
 from config.colunas_saida import COLUNAS_SAIDA
-from src.banco import buscar_dados_demanda
+from src.database import buscar_dados_demanda
 
 
 def gerar_analise_tecnica(df_entrada: pd.DataFrame) -> pd.DataFrame:
-    """Gera o DataFrame da análise técnica a partir da planilha do cliente."""
+    """
+    Gera o DataFrame da análise técnica a partir da planilha do cliente.
+    
+    Args:
+        df_entrada: DataFrame com os dados de entrada (planilha do cliente)
+        
+    Returns:
+        DataFrame formatado com as colunas de saída da análise técnica
+    """
     blocos = _agrupar_por_demanda(df_entrada)
     registros = [_mapear_bloco(bloco) for bloco in blocos]
     return pd.DataFrame(registros, columns=COLUNAS_SAIDA)
 
 
 def _agrupar_por_demanda(df: pd.DataFrame) -> list:
-    """Agrupa as linhas em blocos por demanda.
+    """
+    Agrupa as linhas em blocos por demanda.
 
     A planilha de entrada usa células mescladas: uma demanda ocupa várias
     linhas, onde só Sistema/Versão variam e as demais colunas vêm vazias
@@ -30,6 +41,15 @@ def _agrupar_por_demanda(df: pd.DataFrame) -> list:
 
 
 def _mapear_bloco(bloco: list) -> dict:
+    """
+    Mapeia um bloco de linhas para um registro de saída.
+    
+    Args:
+        bloco: Lista de rows (Series) pertencentes à mesma demanda
+        
+    Returns:
+        Dicionário com os campos da análise técnica
+    """
     primeira = bloco[0]
     demanda = primeira.get("Demanda", "").strip()
     dados_banco = buscar_dados_demanda(demanda)

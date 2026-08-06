@@ -1,9 +1,8 @@
 import sys
 
-from src.leitor import encontrar_arquivo_entrada, ler_planilha
-from src.gerador import gerar_analise_tecnica
-from src.formatador_excel import formatar_planilha
-from src.google_sheets import exportar_para_sheets
+from src.io import encontrar_arquivo_entrada, ler_planilha, exportar_para_sheets
+from src.core import gerar_analise_tecnica
+from src.formatacao import formatar_planilha
 from src.utils import gerar_nome_saida, garantir_pastas, exibir_log
 
 PASTA_INPUT = "input"

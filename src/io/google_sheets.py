@@ -1,6 +1,7 @@
 """
 Módulo para exportação de dados para Google Sheets usando gspread.
 """
+
 import os
 from typing import Tuple
 
